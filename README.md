@@ -1,4 +1,4 @@
-Domain: api.name.zone/api 
+# News Explorer – Final project for Yandex Practicum web developer course
 
-20.42.82.122
-
+Server's public IP address: 20.42.82.122  
+Backend: http://www.api.fpr.students.nomoreparties.site/api/
