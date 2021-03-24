@@ -1,9 +1,9 @@
 require('dotenv').config();
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET, MONGO_SERVER } = process.env;
 
 // Mongo server address
-const mongoServer = 'mongodb://localhost:27017/news-explorer';
+const mongoServer = NODE_ENV === 'production' ? MONGO_SERVER : 'mongodb://localhost:27017/news-explorer';
 
 // Secret key for hashing passwords
 const secretKey = NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret';

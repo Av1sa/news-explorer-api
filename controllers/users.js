@@ -5,13 +5,14 @@ const User = require('../models/user');
 const { secretKey } = require('../utils/utils');
 const { NotFoundError } = require('../errors/NotFoundError');
 const { UnauthorizedError } = require('../errors/UnauthorizedError');
-const { BadInputError } = require('../errors/BadInputError');
+const { ConflictError } = require('../errors/ConflictError');
+const ErrorMessages = require('../utils/error-messages');
 
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError(ErrorMessages.USER_NOT_FOUND);
       }
       res.send(user);
     })
@@ -27,8 +28,8 @@ const createUser = (req, res, next) => {
       password: hash,
       name,
     }))
-    .then((user) => res.send(user))
-    .catch(() => next(new BadInputError('User already exists')));
+    .then((user) => res.send({ id: user._id, email: user.email, name: user.name }))
+    .catch(() => next(new ConflictError(ErrorMessages.USER_ALREADY_EXISTS)));
 };
 
 const loginUser = (req, res, next) => {
@@ -38,13 +39,13 @@ const loginUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return Promise.reject(
-          new UnauthorizedError('Incorrect password or email'),
+          new UnauthorizedError(ErrorMessages.INCORRECT_PASSWORD_OR_EMAIL),
         );
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
           return Promise.reject(
-            new UnauthorizedError('Incorrect password or email'),
+            new UnauthorizedError(ErrorMessages.INCORRECT_PASSWORD_OR_EMAIL),
           );
         }
         return user;
